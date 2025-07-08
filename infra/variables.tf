@@ -1,7 +1,7 @@
 variable "aws_region" {
   description = "AWS region to deploy resources in."
   type        = string
-  default     = "us-east-1"
+  default     = "us-east-2"
 }
 
 variable "project_name" {
@@ -44,4 +44,26 @@ variable "ssm_token_value" {
   description = "Value for the API token stored in SSM"
   type        = string
   default     = "changeme-token"
+}
+
+variable "api_receiver_image" {
+  description = "Docker image for the API receiver microservice."
+  type        = string
+}
+
+variable "api_receiver_port" {
+  description = "Port for the API receiver microservice."
+  type        = number
+  default     = 8080
+}
+
+variable "sqs_worker_image" {
+  description = "Docker image for the SQS worker microservice."
+  type        = string
+}
+
+variable "sqs_worker_port" {
+  description = "Port for the SQS worker microservice."
+  type        = number
+  default     = 8080
 }

@@ -47,4 +47,30 @@ module "iam" {
   ssm_param_arn  = module.ssm_parameter.arn
 }
 
+module "ecs_api_receiver" {
+  source            = "./modules/ecs"
+  project_name      = var.project_name
+  subnet_id         = module.vpc.public_subnet_id
+  ecs_task_role_arn = module.iam.ecs_task_role_arn
+  container_image   = var.api_receiver_image
+  container_port    = var.api_receiver_port
+}
+
+module "ecs_sqs_worker" {
+  source            = "./modules/ecs"
+  project_name      = "${var.project_name}-worker"
+  subnet_id         = module.vpc.public_subnet_id
+  ecs_task_role_arn = module.iam.ecs_task_role_arn
+  container_image   = var.sqs_worker_image
+  container_port    = var.sqs_worker_port
+}
+
+module "alb" {
+  source      = "./modules/alb"
+  project_name = var.project_name
+  vpc_id      = module.vpc.vpc_id
+  subnet_id   = module.vpc.public_subnet_id
+  target_port = var.api_receiver_port
+}
+
 # ...other infrastructure modules will be added here...
