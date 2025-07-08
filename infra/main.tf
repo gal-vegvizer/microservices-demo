@@ -54,6 +54,8 @@ module "ecs_api_receiver" {
   ecs_task_role_arn = module.iam.ecs_task_role_arn
   container_image   = var.api_receiver_image
   container_port    = var.api_receiver_port
+  security_group_id = module.ecs_api_receiver_sg.ecs_sg_id
+  target_group_arn  = module.alb.target_group_arn
 }
 
 module "ecs_sqs_worker" {
@@ -63,6 +65,7 @@ module "ecs_sqs_worker" {
   ecs_task_role_arn = module.iam.ecs_task_role_arn
   container_image   = var.sqs_worker_image
   container_port    = var.sqs_worker_port
+  security_group_id = module.ecs_sqs_worker_sg.ecs_sg_id
 }
 
 module "alb" {
@@ -71,6 +74,20 @@ module "alb" {
   vpc_id      = module.vpc.vpc_id
   subnet_id   = module.vpc.public_subnet_id
   target_port = var.api_receiver_port
+}
+
+module "ecs_api_receiver_sg" {
+  source      = "./modules/security_group"
+  project_name = var.project_name
+  vpc_id      = module.vpc.vpc_id
+  ingress_port = var.api_receiver_port
+}
+
+module "ecs_sqs_worker_sg" {
+  source      = "./modules/security_group"
+  project_name = "${var.project_name}-worker"
+  vpc_id      = module.vpc.vpc_id
+  ingress_port = var.sqs_worker_port
 }
 
 # ...other infrastructure modules will be added here...

@@ -23,3 +23,14 @@ variable "container_port" {
   type        = number
   default     = 8080
 }
+
+variable "security_group_id" {
+  description = "Security group ID for the ECS service."
+  type        = string
+}
+
+variable "target_group_arn" {
+  description = "ARN of the ALB target group (optional, for services behind ALB)."
+  type        = string
+  default     = null
+}

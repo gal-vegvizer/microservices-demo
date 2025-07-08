@@ -35,6 +35,15 @@ resource "aws_ecs_service" "main" {
   network_configuration {
     subnets          = [var.subnet_id]
     assign_public_ip = true
+    security_groups  = [var.security_group_id]
+  }
+  dynamic "load_balancer" {
+    for_each = var.target_group_arn != null ? [1] : []
+    content {
+      target_group_arn = var.target_group_arn
+      container_name   = "app"
+      container_port   = var.container_port
+    }
   }
 }
 
