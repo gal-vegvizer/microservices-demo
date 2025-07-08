@@ -6,6 +6,14 @@ terraform {
       version = ">= 4.0"
     }
   }
+  
+  backend "s3" {
+    bucket         = "microdemo-terraform-state-bucket"
+    key            = "microservices-demo/terraform.tfstate"
+    region         = "us-east-2"
+    dynamodb_table = "microdemo-terraform-locks"
+    encrypt        = true
+  }
 }
 
 provider "aws" {
