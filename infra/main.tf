@@ -13,11 +13,11 @@ provider "aws" {
 }
 
 module "vpc" {
-  source             = "./modules/vpc"
-  project_name       = var.project_name
-  aws_region         = var.aws_region
-  vpc_cidr           = var.vpc_cidr
-  public_subnet_cidr = var.public_subnet_cidr
+  source               = "./modules/vpc"
+  project_name         = var.project_name
+  aws_region           = var.aws_region
+  vpc_cidr             = var.vpc_cidr
+  public_subnet_cidrs  = var.public_subnet_cidrs
 }
 
 module "s3" {
@@ -72,7 +72,7 @@ module "alb" {
   source      = "./modules/alb"
   project_name = var.project_name
   vpc_id      = module.vpc.vpc_id
-  subnet_id   = module.vpc.public_subnet_id
+  subnet_ids  = module.vpc.public_subnet_ids
   target_port = var.api_receiver_port
 }
 
