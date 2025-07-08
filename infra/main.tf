@@ -13,11 +13,11 @@ provider "aws" {
 }
 
 module "vpc" {
-  source               = "./modules/vpc"
-  project_name         = var.project_name
-  aws_region           = var.aws_region
-  vpc_cidr             = var.vpc_cidr
-  public_subnet_cidrs  = var.public_subnet_cidrs
+  source              = "./modules/vpc"
+  project_name        = var.project_name
+  aws_region          = var.aws_region
+  vpc_cidr            = var.vpc_cidr
+  public_subnet_cidrs = var.public_subnet_cidrs
 }
 
 module "s3" {
@@ -40,11 +40,11 @@ module "ssm_parameter" {
 }
 
 module "iam" {
-  source         = "./modules/iam"
-  project_name   = var.project_name
-  s3_bucket_arn  = module.s3.bucket_name
-  sqs_queue_arn  = module.sqs.queue_url
-  ssm_param_arn  = module.ssm_parameter.arn
+  source        = "./modules/iam"
+  project_name  = var.project_name
+  s3_bucket_arn = module.s3.bucket_name
+  sqs_queue_arn = module.sqs.queue_url
+  ssm_param_arn = module.ssm_parameter.arn
 }
 
 module "ecs_api_receiver" {
@@ -69,24 +69,24 @@ module "ecs_sqs_worker" {
 }
 
 module "alb" {
-  source      = "./modules/alb"
+  source       = "./modules/alb"
   project_name = var.project_name
-  vpc_id      = module.vpc.vpc_id
-  subnet_ids  = module.vpc.public_subnet_ids
-  target_port = var.api_receiver_port
+  vpc_id       = module.vpc.vpc_id
+  subnet_ids   = module.vpc.public_subnet_ids
+  target_port  = var.api_receiver_port
 }
 
 module "ecs_api_receiver_sg" {
-  source      = "./modules/security_group"
+  source       = "./modules/security_group"
   project_name = var.project_name
-  vpc_id      = module.vpc.vpc_id
+  vpc_id       = module.vpc.vpc_id
   ingress_port = var.api_receiver_port
 }
 
 module "ecs_sqs_worker_sg" {
-  source      = "./modules/security_group"
+  source       = "./modules/security_group"
   project_name = "${var.project_name}-worker"
-  vpc_id      = module.vpc.vpc_id
+  vpc_id       = module.vpc.vpc_id
   ingress_port = var.sqs_worker_port
 }
 
