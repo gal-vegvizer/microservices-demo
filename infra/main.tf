@@ -32,4 +32,12 @@ module "sqs" {
   sqs_queue_name = var.sqs_queue_name
 }
 
+module "iam" {
+  source         = "./modules/iam"
+  project_name   = var.project_name
+  s3_bucket_arn  = module.s3.bucket_name
+  sqs_queue_arn  = module.sqs.queue_url
+  ssm_param_arn  = aws_ssm_parameter.token.arn
+}
+
 # ...other infrastructure modules will be added here...
