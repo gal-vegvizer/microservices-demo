@@ -1,15 +1,15 @@
 output "vpc_id" {
-  value = aws_vpc.main.id
+  value = module.vpc.vpc_id
 }
 
 output "alb_dns_name" {
-  value = aws_lb.main.dns_name
+  value = module.alb.alb_dns_name
 }
 
 output "s3_bucket_name" {
-  value = aws_s3_bucket.data_bucket.id
+  value = module.s3.bucket_name
 }
 
 output "sqs_queue_url" {
-  value = aws_sqs_queue.main.id
+  value = module.sqs.queue_url
 }
