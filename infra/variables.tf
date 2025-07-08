@@ -33,3 +33,15 @@ variable "sqs_queue_name" {
   type        = string
   default     = null
 }
+
+variable "ssm_token_name" {
+  description = "Name for the SSM parameter storing the API token"
+  type        = string
+  default     = "/microservices-demo/api-token"
+}
+
+variable "ssm_token_value" {
+  description = "Value for the API token stored in SSM"
+  type        = string
+  default     = "changeme-token"
+}
