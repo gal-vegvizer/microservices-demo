@@ -50,7 +50,7 @@ module "iam" {
 module "ecs_api_receiver" {
   source            = "./modules/ecs"
   project_name      = var.project_name
-  subnet_id         = module.vpc.public_subnet_id
+  subnet_id         = module.vpc.public_subnet_ids[0]
   ecs_task_role_arn = module.iam.ecs_task_role_arn
   container_image   = var.api_receiver_image
   container_port    = var.api_receiver_port
@@ -61,7 +61,7 @@ module "ecs_api_receiver" {
 module "ecs_sqs_worker" {
   source            = "./modules/ecs"
   project_name      = "${var.project_name}-worker"
-  subnet_id         = module.vpc.public_subnet_id
+  subnet_id         = module.vpc.public_subnet_ids[1]
   ecs_task_role_arn = module.iam.ecs_task_role_arn
   container_image   = var.sqs_worker_image
   container_port    = var.sqs_worker_port
