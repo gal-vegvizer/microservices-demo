@@ -1,0 +1,19 @@
+{
+  "name": "sqs-worker",
+  "version": "1.0.0",
+  "description": "SQS microservice that pulls messages and uploads to S3",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1490.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

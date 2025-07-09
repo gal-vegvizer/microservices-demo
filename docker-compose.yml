@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  mock-aws-services:
+    build:
+      context: .
+      dockerfile: Dockerfile.mock-aws
+    ports:
+      - "4566:4566"
+    environment:
+      - PORT=4566
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  api-receiver:
+    build:
+      context: ./services/api-receiver
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=development
+      - PORT=8080
+      - AWS_REGION=us-east-2
+      - S3_BUCKET_NAME=microdemo-data-bucket
+      - SSM_API_TOKEN_PARAM=/microservices-demo/api-token
+      - USE_MOCK_AWS=true
+      - MOCK_AWS_BASE=http://mock-aws-services:4566
+    volumes:
+      - ./services/api-receiver/index.js:/app/index.js:ro
+    networks:
+      - microservices
+    restart: unless-stopped
+    depends_on:
+      - mock-aws-services
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  sqs-worker:
+    build:
+      context: ./services/sqs-worker
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=development
+      - AWS_REGION=us-east-2
+      - S3_BUCKET_NAME=microdemo-data-bucket
+      - SQS_QUEUE_URL=https://sqs.us-east-2.amazonaws.com/145023112744/microdemo-queue
+      - POLLING_INTERVAL_MS=5000
+      - USE_MOCK_AWS=true
+      - MOCK_AWS_BASE=http://mock-aws-services:4566
+    volumes:
+      - ./services/sqs-worker/index.js:/app/index.js:ro
+    networks:
+      - microservices
+    restart: unless-stopped
+    depends_on:
+      - api-receiver
+      - mock-aws-services
+
+networks:
+  microservices:
+    driver: bridge
